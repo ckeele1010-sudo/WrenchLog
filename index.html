@@ -3,485 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WrenchLog</title>
+    <title>WrenchLog - Maintenance Tracker</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 16px;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        h2 {
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        header {
             text-align: center;
-            color: #ffffff;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        p.subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .card {
-            background: #1e1e1e;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        h3, h4 {
-            margin-top: 0;
-            color: #ffffff;
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
         }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
         label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            color: #aaa;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 0.35rem;
         }
-        select, input, textarea {
+
+        input, select, textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            background: #2c2c2c;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #fff;
-            box-sizing: border-box;
+            padding: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            background: #fff;
         }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
         .btn {
-            background: #007bff;
+            display: inline-block;
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
             cursor: pointer;
-            font-weight: bold;
             width: 100%;
+            transition: background-color 0.2s;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            box-sizing: border-box;
-            margin-bottom: 8px;
         }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
         .btn-danger {
-            background: #dc3545;
+            background-color: var(--danger);
         }
-        .btn:active {
-            opacity: 0.8;
+
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
         }
-        .row {
+
+        .btn-secondary {
+            background-color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        .record-item, .vehicle-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .vehicle-item {
+            border-left-color: var(--success);
+        }
+
+        .vehicle-header {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
             display: flex;
-            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
         }
-        .row > * {
-            flex: 1;
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
         }
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 12px;
+
+        .spec-label {
+            color: var(--text-light);
+            font-weight: 500;
         }
-        .log-item {
-            background: #282828;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            font-size: 14px;
-            border-left: 4px solid #007bff;
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
         }
-        /* Toast Notification */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
+
+        .empty-state {
             text-align: center;
-            border-radius: 4px;
-            padding: 12px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            color: var(--text-light);
+            padding: 1.5rem;
+            font-style: italic;
         }
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.3s, fadeout 0.3s 2.7s;
+
+        @media (max-width: 600px) {
+            .form-row, .specs-grid {
+                grid-template-columns: 1fr;
+            }
         }
-        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
-        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+
+        @media (min-width: 640px) {
+            body {
+                padding: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h2>WrenchLog</h2>
+    <header>
+        <h1>WrenchLog</h1>
+        <p class="subtitle">Vehicle Maintenance & Fluid Tracker</p>
+    </header>
 
-    <!-- Vehicle Management Card -->
-    <div class="card">
-        <h3>Vehicle Management</h3>
-        
-        <label for="finder-vehicle-select">Active Vehicle:</label>
-        <select id="finder-vehicle-select" onchange="updateActiveVehicle()">
-            <!-- Dynamically populated -->
-        </select>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('logs')">Service Logs</button>
+        <button class="tab-btn" onclick="switchTab('garage')">Vehicle Garage & Specs</button>
+    </div>
 
-        <div style="margin-top: 15px; border-top: 1px solid #444; padding-top: 12px;">
-            <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #aaa;">Add Custom Vehicle</h4>
-            <div class="row">
-                <input type="number" id="new-vehicle-year" placeholder="Year" />
-                <input type="text" id="new-vehicle-make" placeholder="Make" />
-                <input type="text" id="new-vehicle-model" placeholder="Model" />
+    <!-- TAB 1: SERVICE LOGS -->
+    <div id="logs-tab" class="tab-content active">
+        <div class="card">
+            <h2>Add Service Record</h2>
+            <form id="serviceForm" onsubmit="addRecord(event)">
+                <div class="form-group">
+                    <label for="vehicleSelect">Vehicle</label>
+                    <select id="vehicleSelect" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="serviceType">Service Performed</label>
+                    <input type="text" id="serviceType" placeholder="e.g., Oil Change, Spark Plugs, Diff Fluid" required>
+                </div>
+                <div class="form-group">
+                    <label for="mileage">Mileage</label>
+                    <input type="number" id="mileage" placeholder="e.g., 45000" required>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes / Details</label>
+                    <textarea id="notes" rows="2" placeholder="e.g., Rotated tires and checked brake pad wear"></textarea>
+                </div>
+                <button type="submit" class="btn">Save Record</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Maintenance History</h2>
+            <div id="recordsList">
+                <div class="empty-state">No maintenance records added yet.</div>
             </div>
-            <div class="row">
-                <input type="text" id="new-vehicle-trim" placeholder="Trim (e.g. SV)" />
-                <input type="text" id="new-vehicle-engine" placeholder="Engine (e.g. 4.0L V6)" />
+            <button id="clearBtn" class="btn btn-danger btn-secondary" onclick="clearRecords()" style="display:none;">Clear All History</button>
+        </div>
+    </div>
+
+    <!-- TAB 2: VEHICLE GARAGE & SPECS -->
+    <div id="garage-tab" class="tab-content">
+        <div class="card">
+            <h2>Add Vehicle & Fluid Specs</h2>
+            <form id="vehicleForm" onsubmit="addVehicle(event)">
+                <div class="form-group">
+                    <label for="vehName">Vehicle Name / Year / Model</label>
+                    <input type="text" id="vehName" placeholder="e.g., 2019 Nissan Frontier SV 4x4" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehOilType">Oil Type / Weight</label>
+                        <input type="text" id="vehOilType" placeholder="e.g., 5W-30 Full Synthetic">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehOilCap">Oil Capacity</label>
+                        <input type="text" id="vehOilCap" placeholder="e.g., 5.3 Quarts">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehOilFilter">Oil Filter Part #</label>
+                        <input type="text" id="vehOilFilter" placeholder="e.g., OEM 15208-65F0A">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehAirFilter">Air Filter Part #</label>
+                        <input type="text" id="vehAirFilter" placeholder="e.g., Fram CA10627">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehCabinFilter">Cabin Air Filter Part #</label>
+                        <input type="text" id="vehCabinFilter" placeholder="e.g., Fram CF11855">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehSparkPlugs">Spark Plugs Part #</label>
+                        <input type="text" id="vehSparkPlugs" placeholder="e.g., NGK DILKAR7B11">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="vehExtra">Other Fluids / Notes</label>
+                    <input type="text" id="vehExtra" placeholder="e.g., Diff: 75W-90 Synthetic Gear Oil">
+                </div>
+                <button type="submit" class="btn btn-success">Save Vehicle Specs</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>My Garage Specs</h2>
+            <div id="vehiclesList">
+                <div class="empty-state">No vehicles added yet. Add one above!</div>
             </div>
-            <button class="btn" style="background: #28a745;" onclick="addNewVehicle()">Add & Select Vehicle</button>
         </div>
     </div>
-
-    <!-- Part Finder Card -->
-    <div class="card">
-        <h3 id="current-vehicle-display" style="margin-top: 0;">No Vehicle Selected</h3>
-        
-        <label for="finder-keyword">Part / Keyword Search:</label>
-        <input type="text" id="finder-keyword" placeholder="e.g. oil filter, spark plugs" oninput="runPartSearch()" />
-
-        <div class="links-container">
-            <a id="link-rockauto" href="https://www.rockauto.com" target="_blank" class="btn">Search RockAuto</a>
-            <a id="link-amazon" href="https://www.amazon.com" target="_blank" class="btn" style="background: #ff9900; color: #000;">Search Amazon</a>
-            <a id="link-ebay" href="https://www.ebay.com" target="_blank" class="btn" style="background: #e53238;">Search eBay</a>
-        </div>
-    </div>
-
-    <!-- Service Log Entry Card -->
-    <div class="card">
-        <h3>Add Service Record</h3>
-        <label for="service-date">Date:</label>
-        <input type="date" id="service-date" />
-
-        <label for="service-description">Work Performed / Notes:</label>
-        <textarea id="service-description" rows="3" placeholder="e.g. Oil change, swapped spark plugs..."></textarea>
-
-        <button class="btn" onclick="saveServiceRecord()">Save Service Record</button>
-    </div>
-
-    <!-- Service Log History Card -->
-    <div class="card">
-        <h3>Service Log History</h3>
-        <div id="service-log-list">
-            <p style="color: #888; font-size: 14px;">No service records logged yet.</p>
-        </div>
-        <button class="btn btn-danger" onclick="clearServiceLog()" style="margin-top: 12px;">Clear Vehicle Service Log</button>
-    </div>
-
-    <!-- Receipt History Card -->
-    <div class="card">
-        <h3>Receipt History</h3>
-        
-        <label for="receipt-file-input">Add New Receipt:</label>
-        <input type="file" id="receipt-file-input" accept="image/*" onchange="saveNewReceipt(event)" />
-
-        <div id="receipt-list" style="margin-top: 12px;">
-            <p style="color: #888; font-size: 14px;">No receipts stored yet.</p>
-        </div>
-        
-        <button class="btn btn-danger" onclick="clearReceiptHistory()" style="margin-top: 12px;">Clear Receipt History</button>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast"></div>
 
     <script>
-        // Load vehicles from localStorage
-        function getStoredVehicles() {
-            const saved = localStorage.getItem('wrenchlog_vehicles');
-            if (saved) {
-                try { return JSON.parse(saved); } catch (e) { return {}; }
+        let records = JSON.parse(localStorage.getItem('wrenchlog_records')) || [];
+        let vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
+            { 
+                id: "default-frontier", 
+                name: "2019 Nissan Frontier SV 4x4", 
+                oilType: "5W-30 Full Synthetic", 
+                oilCap: "5.3 Quarts", 
+                oilFilter: "OEM 15208-65F0A", 
+                airFilter: "Fram CA10627", 
+                cabinFilter: "Fram CF11855", 
+                sparkPlugs: "NGK Laser Iridium", 
+                extra: "Diffs: 75W-90 Synthetic" 
             }
-            return {};
+        ];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            if(tabName === 'logs') {
+                document.getElementById('logs-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                updateVehicleDropdown();
+            } else {
+                document.getElementById('garage-tab').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                renderVehicles();
+            }
         }
 
-        let vehicles = getStoredVehicles();
-
-        function initVehicleDropdown(selectKey = null) {
-            const select = document.getElementById('finder-vehicle-select');
-            if (!select) return;
+        function updateVehicleDropdown() {
+            const select = document.getElementById('vehicleSelect');
             select.innerHTML = '';
-            
-            const keys = Object.keys(vehicles);
-            
-            if (keys.length === 0) {
-                const opt = document.createElement('option');
-                opt.value = "";
-                opt.innerText = "-- No Vehicles Added Yet --";
-                select.appendChild(opt);
-                const displayEl = document.getElementById('current-vehicle-display');
-                if (displayEl) displayEl.innerText = "No Vehicle Selected";
-                runPartSearch();
-                loadServiceLog();
+            if (vehicles.length === 0) {
+                select.innerHTML = '<option value="">-- Add a vehicle in Garage first --</option>';
                 return;
             }
-
-            keys.forEach(key => {
-                const v = vehicles[key];
-                const opt = document.createElement('option');
-                opt.value = key;
-                let label = `${v.year} ${v.make} ${v.model}`;
-                if (v.trim) label += ` ${v.trim}`;
-                opt.innerText = label;
+            vehicles.forEach(v => {
+                let opt = document.createElement('option');
+                opt.value = v.name;
+                opt.textContent = v.name;
                 select.appendChild(opt);
             });
-
-            if (selectKey && vehicles[selectKey]) {
-                select.value = selectKey;
-            } else {
-                select.value = keys[0];
-            }
-            updateActiveVehicle();
         }
 
-        function addNewVehicle() {
-            const yearInput = document.getElementById('new-vehicle-year');
-            const makeInput = document.getElementById('new-vehicle-make');
-            const modelInput = document.getElementById('new-vehicle-model');
-            const trimInput = document.getElementById('new-vehicle-trim');
-            const engineInput = document.getElementById('new-vehicle-engine');
-
-            if (!yearInput || !makeInput || !modelInput) return;
-
-            const year = yearInput.value.trim();
-            const make = makeInput.value.trim();
-            const model = modelInput.value.trim();
-            const trim = trimInput ? trimInput.value.trim() : '';
-            const engine = engineInput ? engineInput.value.trim() : '';
-
-            if (!year || !make || !model) {
-                showToast("Error", "Please fill in at least Year, Make, and Model.");
-                return;
-            }
-
-            const newKey = 'vehicle_' + Date.now();
-            vehicles[newKey] = { 
-                year: parseInt(year), 
-                make: make, 
-                model: model, 
-                trim: trim, 
-                engine: engine 
+        function addVehicle(e) {
+            e.preventDefault();
+            const newVehicle = {
+                id: Date.now().toString(),
+                name: document.getElementById('vehName').value,
+                oilType: document.getElementById('vehOilType').value,
+                oilCap: document.getElementById('vehOilCap').value,
+                oilFilter: document.getElementById('vehOilFilter').value,
+                airFilter: document.getElementById('vehAirFilter').value,
+                cabinFilter: document.getElementById('vehCabinFilter').value,
+                sparkPlugs: document.getElementById('vehSparkPlugs').value,
+                extra: document.getElementById('vehExtra').value
             };
-            
+
+            vehicles.push(newVehicle);
             localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
-
-            yearInput.value = '';
-            makeInput.value = '';
-            modelInput.value = '';
-            if (trimInput) trimInput.value = '';
-            if (engineInput) engineInput.value = '';
-
-            initVehicleDropdown(newKey);
-            showToast("Success", "Vehicle added successfully!");
-        }
-
-        function updateActiveVehicle() {
-            const selectEl = document.getElementById('finder-vehicle-select');
-            const displayEl = document.getElementById('current-vehicle-display');
-            if (!selectEl || !displayEl) return;
-
-            const vehicleId = selectEl.value;
-            const v = vehicles[vehicleId];
             
-            if (v) {
-                let fullDesc = `${v.year} ${v.make} ${v.model}`;
-                if (v.trim) fullDesc += ` ${v.trim}`;
-                if (v.engine) fullDesc += ` (${v.engine})`;
-                displayEl.innerText = fullDesc;
-            } else {
-                displayEl.innerText = "No Vehicle Selected";
-            }
-            runPartSearch();
-            loadServiceLog();
+            document.getElementById('vehicleForm').reset();
+            renderVehicles();
+            updateVehicleDropdown();
         }
 
-        function runPartSearch() {
-            const selectEl = document.getElementById('finder-vehicle-select');
-            const keywordEl = document.getElementById('finder-keyword');
-            const vehicleId = selectEl ? selectEl.value : '';
-            const keyword = keywordEl ? keywordEl.value.trim() : '';
-            const v = vehicles[vehicleId];
-
-            let queryStr = keyword;
-            if (v && keyword) {
-                queryStr = `${v.year} ${v.make} ${v.model} ${v.trim || ''} ${keyword}`;
-            } else if (v) {
-                queryStr = `${v.year} ${v.make} ${v.model} ${v.trim || ''}`;
-            }
-
-            const encodedQuery = encodeURIComponent(queryStr);
-
-            const rockAutoUrl = v ? `https://www.rockauto.com/en/catalog/${v.make.toLowerCase()},${v.year},${v.model.toLowerCase()}` : `https://www.rockauto.com`;
-            const amazonUrl = `https://www.amazon.com/s?k=${encodedQuery}&tag=wrenchlog-20`;
-            const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
-
-            const raLink = document.getElementById('link-rockauto');
-            const amzLink = document.getElementById('link-amazon');
-            const ebLink = document.getElementById('link-ebay');
-
-            if (raLink) raLink.href = rockAutoUrl;
-            if (amzLink) amzLink.href = amazonUrl;
-            if (ebLink) ebLink.href = ebayUrl;
+        function deleteVehicle(id) {
+            vehicles = vehicles.filter(v => v.id !== id);
+            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+            renderVehicles();
+            updateVehicleDropdown();
         }
 
-        // Service Log Functions
-        function saveServiceRecord() {
-            const selectEl = document.getElementById('finder-vehicle-select');
-            const vehicleId = selectEl ? selectEl.value : '';
-            if (!vehicleId) {
-                showToast("Error", "Please select or add a vehicle first.");
+        function renderVehicles() {
+            const list = document.getElementById('vehiclesList');
+            if (vehicles.length === 0) {
+                list.innerHTML = '<div class="empty-state">No vehicles added yet. Add one above!</div>';
                 return;
             }
-
-            const date = document.getElementById('service-date').value;
-            const desc = document.getElementById('service-description').value.trim();
-
-            if (!date || !desc) {
-                showToast("Error", "Please provide a date and service description.");
-                return;
-            }
-
-            const storageKey = 'wrenchlog_service_' + vehicleId;
-            let logs = [];
-            try {
-                const saved = localStorage.getItem(storageKey);
-                if (saved) logs = JSON.parse(saved);
-            } catch (e) { logs = []; }
-
-            logs.unshift({ date: date, description: desc });
-            localStorage.setItem(storageKey, JSON.stringify(logs));
-
-            document.getElementById('service-description').value = '';
-            loadServiceLog();
-            showToast("Success", "Service record saved.");
-        }
-
-        function loadServiceLog() {
-            const selectEl = document.getElementById('finder-vehicle-select');
-            const container = document.getElementById('service-log-list');
-            if (!container) return;
-
-            const vehicleId = selectEl ? selectEl.value : '';
-            if (!vehicleId) {
-                container.innerHTML = '<p style="color: #888; font-size: 14px;">No vehicle selected.</p>';
-                return;
-            }
-
-            const storageKey = 'wrenchlog_service_' + vehicleId;
-            let logs = [];
-            try {
-                const saved = localStorage.getItem(storageKey);
-                if (saved) logs = JSON.parse(saved);
-            } catch (e) { logs = []; }
-
-            if (logs.length === 0) {
-                container.innerHTML = '<p style="color: #888; font-size: 14px;">No service records logged yet.</p>';
-                return;
-            }
-
-            let html = '';
-            logs.forEach(log => {
-                html += `<div class="log-item"><strong>${log.date}</strong><br>${log.description}</div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function clearServiceLog() {
-            const selectEl = document.getElementById('finder-vehicle-select');
-            const vehicleId = selectEl ? selectEl.value : '';
-            if (!vehicleId) return;
-
-            if (!confirm("Are you sure you want to clear the service log for this vehicle? This cannot be undone.")) {
-                return;
-            }
-
-            localStorage.removeItem('wrenchlog_service_' + vehicleId);
-            loadServiceLog();
-            showToast("Success", "Service log cleared.");
-        }
-
-        // Receipt History Functions
-        function saveNewReceipt(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Data = e.target.result;
-                const timestamp = new Date().toLocaleDateString();
-
-                let receipts = [];
-                try {
-                    const saved = localStorage.getItem('wrenchlog_receipts');
-                    if (saved) receipts = JSON.parse(saved);
-                } catch (err) { receipts = []; }
-
-                receipts.unshift({ date: timestamp, image: base64Data });
-                localStorage.setItem('wrenchlog_receipts', JSON.stringify(receipts));
-
-                event.target.value = '';
-                loadReceiptHistory();
-                showToast("Success", "Receipt saved successfully!");
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function loadReceiptHistory() {
-            const container = document.getElementById('receipt-list');
-            if (!container) return;
-            
-            let receipts = [];
-            try {
-                const saved = localStorage.getItem('wrenchlog_receipts');
-                if (saved) receipts = JSON.parse(saved);
-            } catch (e) { receipts = []; }
-
-            if (receipts.length === 0) {
-                container.innerHTML = '<p style="color: #888; font-size: 14px;">No receipts stored yet.</p>';
-                return;
-            }
-
-            let html = '';
-            receipts.forEach(r => {
-                html += `
-                    <div style="background: #282828; padding: 10px; border-radius: 4px; margin-bottom: 8px;">
-                        <strong style="font-size: 13px; color: #aaa;">Saved on: ${r.date}</strong><br>
-                        <img src="${r.image}" style="max-width: 100%; border-radius: 4px; margin-top: 6px; cursor: pointer;" onclick="window.open('${r.image}')" alt="Receipt" />
+            list.innerHTML = vehicles.map(v => `
+                <div class="vehicle-item">
+                    <div class="vehicle-header">
+                        <span>${v.name}</span>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
+                    <div class="specs-grid">
+                        <div><span class="spec-label">Oil Type:</span> ${v.oilType || 'N/A'}</div>
+                        <div><span class="spec-label">Capacity:</span> ${v.oilCap || 'N/A'}</div>
+                        <div><span class="spec-label">Oil Filter:</span> ${v.oilFilter || 'N/A'}</div>
+                        <div><span class="spec-label">Air Filter:</span> ${v.airFilter || 'N/A'}</div>
+                        <div><span class="spec-label">Cabin Filter:</span> ${v.cabinFilter || 'N/A'}</div>
+                        <div><span class="spec-label">Spark Plugs:</span> ${v.sparkPlugs || 'N/A'}</div>
+                    </div>
+                    ${v.extra ? `<p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;"><strong>Other/Fluids:</strong> ${v.extra}</p>` : ''}
+                    <button class="delete-btn" onclick="deleteVehicle('${v.id}')">Remove Vehicle</button>
+                </div>
+            `).join('');
         }
 
-        function clearReceiptHistory() {
-            if (!confirm("Are you sure you want to clear your receipt history? This cannot be undone.")) {
+        function addRecord(e) {
+            e.preventDefault();
+            const vehicle = document.getElementById('vehicleSelect').value;
+            const type = document.getElementById('serviceType').value;
+            const mileage = document.getElementById('mileage').value;
+            const notes = document.getElementById('notes').value;
+
+            if(!vehicle) {
+                alert('Please select or add a vehicle first.');
                 return;
             }
-            localStorage.removeItem('wrenchlog_receipts');
-            loadReceiptHistory();
-            showToast("Success", "Receipt history cleared.");
+
+            const newRecord = {
+                id: Date.now().toString(),
+                vehicle,
+                type,
+                mileage,
+                notes,
+                date: new Date().toLocaleDateString()
+            };
+
+            records.unshift(newRecord);
+            localStorage.setItem('wrenchlog_records', JSON.stringify(records));
+            
+            document.getElementById('serviceForm').reset();
+            renderRecords();
         }
 
-        function showToast(title, message) {
-            const toast = document.getElementById("toast");
-            if (!toast) return;
-            toast.innerText = `${title}: ${message}`;
-            toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        function deleteRecord(id) {
+            records = records.filter(r => r.id !== id);
+            localStorage.setItem('wrenchlog_records', JSON.stringify(records));
+            renderRecords();
         }
 
-        // Initial setup on load
-        window.addEventListener('DOMContentLoaded', () => {
-            const dateInput = document.getElementById('service-date');
-            if (dateInput) dateInput.valueAsDate = new Date();
-            initVehicleDropdown();
-            loadReceiptHistory();
-        });
+        function clearRecords() {
+            if (confirm("Are you sure you want to clear all service history? This cannot be undone.")) {
+                records = [];
+                localStorage.removeItem('wrenchlog_records');
+                renderRecords();
+            }
+        }
+
+        function renderRecords() {
+            const list = document.getElementById('recordsList');
+            const clearBtn = document.getElementById('clearBtn');
+
+            if (records.length === 0) {
+                list.innerHTML = '<div class="empty-state">No maintenance records added yet.</div>';
+                clearBtn.style.display = 'none';
+                return;
+            }
+
+            clearBtn.style.display = 'block';
+            list.innerHTML = records.map(r => `
+                <div class="record-item">
+                    <div class="record-header" style="display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem;">
+                        <span>${r.vehicle} - ${r.type}</span>
+                        <span>${r.mileage} miles</span>
+                    </div>
+                    <p><small style="color:var(--text-light);">${r.date}</small></p>
+                    ${r.notes ? `<p style="margin-top:0.25rem;">${r.notes}</p>` : ''}
+                    <button class="delete-btn" onclick="deleteRecord('${r.id}')">Delete Record</button>
+                </div>
+            `).join('');
+        }
+
+        updateVehicleDropdown();
+        renderRecords();
+        renderVehicles();
     </script>
 </body>
 </html>
