@@ -576,7 +576,21 @@ function savePart(e) {
             `).join('');
         }
 
-function renderParts() {
+
+        function populateSearchVehicles() {
+            const select = document.getElementById('search-vehicle-select');
+            if (!select) return;
+            const currentVal = select.value;
+            try {
+                const vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles') || '[]');
+                select.innerHTML = '<option value="">-- All Vehicles / Generic Search --</option>' + 
+                    vehicles.map(v => `<option value="${v.id || v.name}">${v.year || ''} ${v.make || ''} ${v.model || ''} (${v.engine || v.trim || ''})</option>`).join('');
+                if (currentVal) select.value = currentVal;
+            } catch(e) {}
+        }
+
+        function renderParts() {
+            populateSearchVehicles();
             const listEl = document.getElementById('parts-list');
             if (parts.length === 0) {
                 listEl.innerHTML = `<p class="subtitle">No parts or fluids saved.</p>`;
