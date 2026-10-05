@@ -466,14 +466,60 @@ if (!Array.isArray(parts)) {
                                                                         function saveVehicle(e) {
             if (e) e.preventDefault();
             console.log("saveVehicle triggered");
-            const nameEl = document.getElementById('veh-name');
+            
+            const idEl = document.getElementById('veh-id');
+            const yearEl = document.getElementById('veh-year');
+            const makeEl = document.getElementById('veh-make');
+            const modelEl = document.getElementById('veh-model');
+            const trimEl = document.getElementById('veh-trim');
+            const engineEl = document.getElementById('veh-engine');
             const oilEl = document.getElementById('veh-oil');
             const filtersEl = document.getElementById('veh-filters');
-            
-            if (nameEl == null || nameEl.value.trim() === '') {
-                alert('Please enter a vehicle name.');
+
+            if (!yearEl || !yearEl.value.trim() || !makeEl || !makeEl.value.trim() || !modelEl || !modelEl.value.trim() || !engineEl || !engineEl.value.trim()) {
+                alert('Please fill out Year, Make, Model, and Engine.');
                 return;
             }
+
+            const year = yearEl.value.trim();
+            const make = makeEl.value.trim();
+            const model = modelEl.value.trim();
+            const trim = trimEl ? trimEl.value.trim() : '';
+            const engine = engineEl.value.trim();
+            const name = `${year} ${make} ${model} ${trim}`.trim();
+
+            const vehicleData = {
+                id: idEl && idEl.value ? idEl.value : ('veh-' + Date.now()),
+                year,
+                make,
+                model,
+                trim,
+                engine,
+                name,
+                oil: oilEl ? oilEl.value.trim() : '',
+                filters: filtersEl ? filtersEl.value.trim() : ''
+            };
+
+            if (idEl && idEl.value) {
+                const idx = allVehicles.findIndex(v => v.id === idEl.value);
+                if (idx !== -1) {
+                    allVehicles[idx] = vehicleData;
+                } else {
+                    allVehicles.push(vehicleData);
+                }
+                idEl.value = '';
+            } else {
+                allVehicles.push(vehicleData);
+            }
+
+            saveData();
+            
+            const form = document.getElementById('vehicle-form');
+            if (form) form.reset();
+            
+            renderAll();
+            console.log("Vehicle saved successfully:", vehicleData);
+        }
 
             const newVeh = {
                 id: 'veh-' + Date.now(),
