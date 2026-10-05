@@ -377,17 +377,32 @@
         }
 
         function saveVehicle(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
+            console.log("saveVehicle triggered");
+            const nameEl = document.getElementById('veh-name');
+            const oilEl = document.getElementById('veh-oil');
+            const filtersEl = document.getElementById('veh-filters');
+            
+            if (!nameEl || !nameEl.value.trim()) {
+                alert('Please enter a vehicle name.');
+                return;
+            }
+
             const newVeh = {
                 id: 'veh-' + Date.now(),
-                name: document.getElementById('veh-name').value,
-                oil: document.getElementById('veh-oil').value,
-                filters: document.getElementById('veh-filters').value
+                name: nameEl.value.trim(),
+                oil: oilEl ? oilEl.value.trim() : '',
+                filters: filtersEl ? filtersEl.value.trim() : ''
             };
+            
             allVehicles.push(newVeh);
             saveData();
-            document.getElementById('vehicle-form').reset();
+            
+            const form = document.getElementById('vehicle-form');
+            if (form) form.reset();
+            
             renderAll();
+            console.log("Vehicle saved successfully:", newVeh);
         }
 
         function savePart(e) {
