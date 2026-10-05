@@ -328,7 +328,7 @@
 
         // Load data from LocalStorage
         let records = JSON.parse(localStorage.getItem('wrenchlog_records')) || [];
-        let vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
+        let allVehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
             { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
         ];
         let parts = JSON.parse(localStorage.getItem('wrenchlog_parts')) || [
@@ -345,7 +345,7 @@
 
         function saveData() {
             localStorage.setItem('wrenchlog_records', JSON.stringify(records));
-            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(allVehicles));
             localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
         }
 
@@ -354,7 +354,7 @@
             selects.forEach(id => {
                 const select = document.getElementById(id);
                 if (!select) return;
-                select.innerHTML = vehicles.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+                select.innerHTML = allVehicles.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
             });
         }
 
@@ -384,7 +384,7 @@
                 oil: document.getElementById('veh-oil').value,
                 filters: document.getElementById('veh-filters').value
             };
-            vehicles.push(newVeh);
+            allVehicles.push(newVeh);
             saveData();
             document.getElementById('vehicle-form').reset();
             renderAll();
@@ -412,7 +412,7 @@
         }
 
         function deleteVehicle(id) {
-            vehicles = vehicles.filter(v => v.id !== id);
+            allVehicles = allVehicles.filter(v => v.id !== id);
             saveData();
             renderAll();
         }
@@ -426,7 +426,7 @@
         function renderDashboard() {
             const summaryEl = document.getElementById('summary-content');
             summaryEl.innerHTML = `
-                <p><strong>Total Vehicles:</strong> ${vehicles.length}</p>
+                <p><strong>Total Vehicles:</strong> ${allVehicles.length}</p>
                 <p><strong>Logged Maintenance Events:</strong> ${records.length}</p>
                 <p><strong>Saved Part/Fluid Specs:</strong> ${parts.length}</p>
             `;
@@ -471,11 +471,11 @@
 
         function renderVehicles() {
             const listEl = document.getElementById('vehicles-list');
-            if (vehicles.length === 0) {
+            if (allVehicles.length === 0) {
                 listEl.innerHTML = `<p class="subtitle">No vehicles registered.</p>`;
                 return;
             }
-            listEl.innerHTML = vehicles.map(v => `
+            listEl.innerHTML = allVehicles.map(v => `
                 <div class="record-item">
                     <div class="record-header">
                         <span>${v.name}</span>
