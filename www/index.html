@@ -98,9 +98,12 @@
         }
 
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             margin-bottom: 1rem;
             color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .form-group {
@@ -109,18 +112,20 @@
 
         label {
             display: block;
-            font-weight: 500;
             font-size: 0.85rem;
+            font-weight: 600;
             margin-bottom: 0.35rem;
+            color: var(--text);
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 0.65rem;
+            padding: 0.625rem;
             border: 1px solid var(--border);
             border-radius: 0.375rem;
-            font-size: 1rem;
-            background: #fff;
+            font-size: 0.95rem;
+            background-color: #fff;
+            color: var(--text);
         }
 
         input:focus, select:focus, textarea:focus {
@@ -130,11 +135,10 @@
         }
 
         .btn {
-            display: inline-block;
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.75rem 1.25rem;
+            padding: 0.625rem 1rem;
             font-size: 1rem;
             font-weight: 600;
             border-radius: 0.375rem;
@@ -156,425 +160,373 @@
             background-color: var(--danger-dark);
         }
 
-        .btn-secondary {
-            background-color: #64748b;
-            margin-top: 0.5rem;
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            width: auto;
         }
 
-        .btn-secondary:hover {
-            background-color: #475569;
-        }
-
-        .record-item, .vehicle-item, .part-item {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--primary);
+        .record-item, .part-item {
             padding: 0.85rem;
+            border: 1px solid var(--border);
             border-radius: 0.375rem;
             margin-bottom: 0.75rem;
-            font-size: 0.95rem;
+            background: #fff;
             position: relative;
         }
 
-        .vehicle-item {
-            border-left-color: var(--success);
-        }
-
-        .part-item {
-            border-left-color: var(--warning);
-        }
-
-        .record-header, .vehicle-header, .part-header {
+        .record-header {
             display: flex;
             justify-content: space-between;
             font-weight: 600;
-            margin-bottom: 0.35rem;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        .delete-btn:hover {
-            text-decoration: underline;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-light);
-            padding: 1.5rem;
             font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .record-details {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>WrenchLog</h1>
-        <p class="subtitle">Vehicle Maintenance, Garage & Parts Reference</p>
+        <p class="subtitle">Maintenance Tracker & Garage Management</p>
     </header>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('logs')">Service Logs</button>
-        <button class="tab-btn" onclick="switchTab('garage')">Vehicle Garage</button>
-        <button class="tab-btn" onclick="switchTab('parts')">Parts Lookup</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('records')">Log Entry</button>
+        <button class="tab-btn" onclick="switchTab('vehicles')">Vehicles</button>
+        <button class="tab-btn" onclick="switchTab('parts')">Parts & Fluids</button>
     </div>
 
-    <!-- TAB 1: SERVICE LOGS -->
-    <div id="logs-tab" class="tab-content active">
+    <!-- Dashboard Tab -->
+    <div id="dashboard" class="tab-content active">
         <div class="card">
-            <h2>Add Service Record</h2>
-            <form id="serviceForm" onsubmit="addRecord(event)">
-                <div class="form-group">
-                    <label for="vehicleSelect">Vehicle</label>
-                    <select id="vehicleSelect" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="serviceType">Service Type</label>
-                    <input type="text" id="serviceType" placeholder="e.g., Oil & Filter Change" required>
-                </div>
-                <div class="form-group">
-                    <label for="mileage">Mileage</label>
-                    <input type="number" id="mileage" placeholder="e.g., 45000" required>
-                </div>
-                <div class="form-group">
-                    <label for="notes">Notes & Parts Used</label>
-                    <textarea id="notes" rows="3" placeholder="e.g., Used 5W-30 full synthetic and OEM filter"></textarea>
-                </div>
-                <button type="submit" class="btn">Save Service Record</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>Service History</h2>
-            <div id="recordsList">
-                <div class="empty-state">No maintenance records added yet.</div>
+            <h2>Garage Summary</h2>
+            <div id="summary-content">
+                <p class="subtitle">Loading garage overview...</p>
             </div>
-            <button id="clearBtn" class="btn btn-danger btn-secondary" onclick="clearRecords()" style="display:none;">Clear All History</button>
         </div>
-    </div>
-
-    <!-- TAB 2: VEHICLE GARAGE & SPECS -->
-    <div id="garage-tab" class="tab-content">
         <div class="card">
-            <h2>Add / Manage Vehicle</h2>
-            <form id="vehicleForm" onsubmit="addVehicle(event)">
-                <div class="form-group">
-                    <label for="vehName">Vehicle Name / Year / Model</label>
-                    <input type="text" id="vehName" placeholder="e.g., 2019 Nissan Frontier SV" required>
-                </div>
-                <div class="form-group">
-                    <label for="vehOil">Oil Type & Capacity</label>
-                    <input type="text" id="vehOil" placeholder="e.g., 5W-30 Full Synthetic (5.3 Quarts)">
-                </div>
-                <div class="form-group">
-                    <label for="vehFilters">Filter Part Numbers</label>
-                    <textarea id="vehFilters" rows="2" placeholder="Oil Filter: OEM 15208-65F0A&#10;Air Filter: Fram CA10627"></textarea>
-                </div>
-                <button type="submit" class="btn" style="background-color: var(--success);">Save Vehicle Specs</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>My Active Vehicles</h2>
-            <div id="vehiclesList">
-                <div class="empty-state">No vehicles added yet. Add one above!</div>
+            <h2>Recent Maintenance</h2>
+            <div id="recent-records-list">
+                <p class="subtitle">No records logged yet.</p>
             </div>
         </div>
     </div>
 
-    <!-- TAB 3: PARTS LOOKUP -->
-    <div id="parts-tab" class="tab-content">
+    <!-- Log Entry Tab -->
+    <div id="records" class="tab-content">
         <div class="card">
-            <h2>Add Part Reference</h2>
-            <form id="partForm" onsubmit="addPart(event)">
+            <h2>Add Maintenance Record</h2>
+            <form id="record-form" onsubmit="saveRecord(event)">
                 <div class="form-group">
-                    <label for="partVehicleSelect">Vehicle</label>
-                    <select id="partVehicleSelect" required></select>
+                    <label for="rec-vehicle">Vehicle</label>
+                    <select id="rec-vehicle" required></select>
                 </div>
                 <div class="form-group">
-                    <label for="partCategory">Category / Component</label>
-                    <input type="text" id="partCategory" placeholder="e.g., Filters, Spark Plugs, Brakes" required>
+                    <label for="rec-date">Date</label>
+                    <input type="date" id="rec-date" required>
                 </div>
                 <div class="form-group">
-                    <label for="partName">Part Name / Description</label>
-                    <input type="text" id="partName" placeholder="e.g., Engine Air Filter" required>
+                    <label for="rec-mileage">Mileage</label>
+                    <input type="number" id="rec-mileage" placeholder="e.g. 41000" required>
                 </div>
                 <div class="form-group">
-                    <label for="partNumber">Part Number / Specs</label>
-                    <input type="text" id="partNumber" placeholder="e.g., Fram CA10627" required>
+                    <label for="rec-service">Service Performed</label>
+                    <input type="text" id="rec-service" placeholder="e.g. Oil Change & Filter Inspection" required>
                 </div>
-                <button type="submit" class="btn" style="background-color: var(--warning);">Save Part</button>
+                <div class="form-group">
+                    <label for="rec-notes">Notes / Details</label>
+                    <textarea id="rec-notes" rows="3" placeholder="Add specs, part numbers, or observations..."></textarea>
+                </div>
+                <button type="submit" class="btn">Save Record</button>
             </form>
         </div>
-
         <div class="card">
-            <h2>Parts Database & Lookup</h2>
-            <div class="form-group">
-                <input type="text" id="partSearch" placeholder="Search parts, numbers, or categories..." oninput="renderParts()">
-            </div>
-            <div id="partsList">
-                <div class="empty-state">No saved parts yet. Add some above!</div>
-            </div>
+            <h2>Log History</h2>
+            <div id="full-records-list"></div>
+        </div>
+    </div>
+
+    <!-- Vehicles Tab -->
+    <div id="vehicles" class="tab-content">
+        <div class="card">
+            <h2>Add / Manage Vehicles</h2>
+            <form id="vehicle-form" onsubmit="saveVehicle(event)">
+                <div class="form-group">
+                    <label for="veh-name">Vehicle Name / Description</label>
+                    <input type="text" id="veh-name" placeholder="e.g. 2019 Nissan Frontier SV 4x4" required>
+                </div>
+                <div class="form-group">
+                    <label for="veh-oil">Recommended Oil & Capacity</label>
+                    <input type="text" id="veh-oil" placeholder="e.g. 5W-30 Full Synthetic (5.3 Qts)">
+                </div>
+                <div class="form-group">
+                    <label for="veh-filters">Key Filter Part Numbers</label>
+                    <input type="text" id="veh-filters" placeholder="e.g. Oil: OEM 15208-65F0A Air: Fram CA10627">
+                </div>
+                <button type="submit" class="btn">Save Vehicle</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>My Garage</h2>
+            <div id="vehicles-list"></div>
+        </div>
+    </div>
+
+    <!-- Parts & Fluids Tab -->
+    <div id="parts" class="tab-content">
+        <div class="card">
+            <h2>Track Parts & Fluid Specs</h2>
+            <form id="part-form" onsubmit="savePart(event)">
+                <div class="form-group">
+                    <label for="part-vehicle">Vehicle</label>
+                    <select id="part-vehicle" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="part-category">Category</label>
+                    <select id="part-category">
+                        <option value="Filters">Filters</option>
+                        <option value="Fluids">Fluids</option>
+                        <option value="Brakes">Brakes & Suspension</option>
+                        <option value="Ignition">Ignition & Electrical</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="part-name">Part / Fluid Name</label>
+                    <input type="text" id="part-name" placeholder="e.g. Transmission Fluid / Spark Plugs" required>
+                </div>
+                <div class="form-group">
+                    <label for="part-number">Part Number / Specification</label>
+                    <input type="text" id="part-number" placeholder="e.g. Matic-S or NGK DILKAR7B11" required>
+                </div>
+                <button type="submit" class="btn">Save Part Spec</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Saved Parts & Fluids Directory</h2>
+            <div id="parts-list"></div>
         </div>
     </div>
 
     <script>
-
         // Affiliate Tracking Configuration
         const AFFILIATE_TAGS = {
-        amazon: "wrenchlog20-20"
+            amazon: "wrenchlog20-20"
         };
 
         // Load data from LocalStorage
         let records = JSON.parse(localStorage.getItem('wrenchlog_records')) || [];
         let vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
-        { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
+            { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
         ];
         let parts = JSON.parse(localStorage.getItem('wrenchlog_parts')) || [
-        { id: "p-1", vehicle: "2019 Nissan Frontier SV 4x4", category: "Filters", name: "Oil Filter", number: "OEM 15208-65F0A" }
+            { id: "p-1", vehicle: "2019 Nissan Frontier SV 4x4", category: "Filters", name: "Oil Filter", number: "OEM 15208-65F0A" }
         ];
 
         function switchTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-        if(tabName === 'logs') {
-        document.getElementById('logs-tab').classList.add('active');
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        updateVehicleDropdowns();
-        } else if(tabName === 'garage') {
-        document.getElementById('garage-tab').classList.add('active');
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        renderVehicles();
-        } else if(tabName === 'parts') {
-        document.getElementById('parts-tab').classList.add('active');
-        document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        updateVehicleDropdowns();
-        renderParts();
-        }
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            renderAll();
         }
 
-        function updateVehicleDropdowns() {
-        const selects = [document.getElementById('vehicleSelect'), document.getElementById('partVehicleSelect')];
-        selects.forEach(select => {
-        if (!select) return;
-        select.innerHTML = '';
-        if (vehicles.length === 0) {
-        select.innerHTML = '<option value="">-- No vehicles available --</option>';
-        return;
-        }
-        vehicles.forEach(v => {
-        const opt = document.createElement('option');
-        opt.value = v.name;
-        opt.textContent = v.name;
-        select.appendChild(opt);
-        });
-        });
+        function saveData() {
+            localStorage.setItem('wrenchlog_records', JSON.stringify(records));
+            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+            localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
         }
 
-        function addVehicle(e) {
-        e.preventDefault();
-        const name = document.getElementById('vehName').value.trim();
-        const oil = document.getElementById('vehOil').value.trim();
-        const filters = document.getElementById('vehFilters').value.trim();
-
-        if (!name) return;
-
-        const newVeh = {
-        id: Date.now().toString(),
-        name,
-        oil,
-        filters
-        };
-
-        vehicles.push(newVeh);
-        localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
-
-        document.getElementById('vehicleForm').reset();
-        renderVehicles();
-        updateVehicleDropdowns();
+        function populateVehicleDropdowns() {
+            const selects = ['rec-vehicle', 'part-vehicle'];
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (!select) return;
+                select.innerHTML = vehicles.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+            });
         }
 
-        function deleteVehicle(id) {
-        vehicles = vehicles.filter(v => v.id !== id);
-        localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
-        renderVehicles();
-        updateVehicleDropdowns();
+        function saveRecord(e) {
+            e.preventDefault();
+            const newRecord = {
+                id: 'rec-' + Date.now(),
+                vehicle: document.getElementById('rec-vehicle').value,
+                date: document.getElementById('rec-date').value,
+                mileage: document.getElementById('rec-mileage').value,
+                service: document.getElementById('rec-service').value,
+                notes: document.getElementById('rec-notes').value
+            };
+            records.unshift(newRecord);
+            saveData();
+            document.getElementById('record-form').reset();
+            setTodayDate();
+            renderAll();
+            switchTab('dashboard');
         }
 
-        function renderVehicles() {
-        const list = document.getElementById('vehiclesList');
-        if (!list) return;
-        if (vehicles.length === 0) {
-        list.innerHTML = '<div class="empty-state">No vehicles added yet. Add one above!</div>';
-        return;
-        }
-        list.innerHTML = vehicles.map(v => `
-        <div class="vehicle-item">
-        <div class="vehicle-header">
-        <span>${v.name}</span>
-        </div>
-        <p><strong>Oil Specs:</strong> ${v.oil || 'Not specified'}</p>
-        <p><strong>Filters:</strong><br>${(v.filters || 'None').replace(/\n/g, '<br>')}</p>
-        <button class="delete-btn" onclick="deleteVehicle('${v.id}')">Remove Vehicle</button>
-        </div>
-        `).join('');
+        function saveVehicle(e) {
+            e.preventDefault();
+            const newVeh = {
+                id: 'veh-' + Date.now(),
+                name: document.getElementById('veh-name').value,
+                oil: document.getElementById('veh-oil').value,
+                filters: document.getElementById('veh-filters').value
+            };
+            vehicles.push(newVeh);
+            saveData();
+            document.getElementById('vehicle-form').reset();
+            renderAll();
         }
 
-        function addPart(e) {
-        e.preventDefault();
-        const vehicle = document.getElementById('partVehicleSelect').value;
-        const category = document.getElementById('partCategory').value.trim();
-        const name = document.getElementById('partName').value.trim();
-        const number = document.getElementById('partNumber').value.trim();
-
-        if (!vehicle || !category || !name || !number) return;
-
-        const newPart = {
-        id: Date.now().toString(),
-        vehicle,
-        category,
-        name,
-        number
-        };
-
-        parts.unshift(newPart);
-        localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
-
-        document.getElementById('partForm').reset();
-        renderParts();
-        }
-
-        function deletePart(id) {
-        parts = parts.filter(p => p.id !== id);
-        localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
-        renderParts();
-        }
-
-        function renderParts() {
-        const list = document.getElementById('partsList');
-        const searchVal = (document.getElementById('partSearch')?.value || '').toLowerCase();
-        if (!list) return;
-
-        const filteredParts = parts.filter(p => 
-        p.name.toLowerCase().includes(searchVal) || 
-        p.number.toLowerCase().includes(searchVal) || 
-        p.category.toLowerCase().includes(searchVal) ||
-        p.vehicle.toLowerCase().includes(searchVal)
-        );
-
-        if (filteredParts.length === 0) {
-        list.innerHTML = '<div class="empty-state">No matching parts found.</div>';
-        return;
-        }
-
-        list.innerHTML = filteredParts.map(p => {
-        const encodedQuery = encodeURIComponent(`${p.vehicle} ${p.name} ${p.number}`);
-        const encodedPartNum = encodeURIComponent(p.number);
-
-        const amazonUrl = `https://www.amazon.com/s?k=${encodedQuery}&tag=${AFFILIATE_TAGS.amazon}`;
-        const oreillyUrl = `https://www.oreillyauto.com/search?q=${encodedPartNum}`;
-        const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
-
-        return `
-        <div class="part-item">
-        <div class="part-header">
-        <span>[${p.category}] ${p.name}</span>
-        <strong style="color:var(--primary);">${p.number}</strong>
-        </div>
-        <p><small style="color:var(--text-light);">${p.vehicle}</small></p>
-
-        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
-        <a href="${amazonUrl}" target="_blank" style="font-size: 0.8rem; background: #ff9900; color: #000; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Buy on Amazon (Affiliate)</a>
-        <a href="${oreillyUrl}" target="_blank" style="font-size: 0.8rem; background: #003366; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Search O'Reilly</a>
-        <a href="${ebayUrl}" target="_blank" style="font-size: 0.8rem; background: #0064d2; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Find on eBay</a>
-        </div>
-
-        <button class="delete-btn" onclick="deletePart('${p.id}')">Delete Part</button>
-        </div>
-        `;
-        }).join('');
-        }
-
-        function addRecord(e) {
-        e.preventDefault();
-        const vehicle = document.getElementById('vehicleSelect').value;
-        const type = document.getElementById('serviceType').value.trim();
-        const mileage = document.getElementById('mileage').value.trim();
-        const notes = document.getElementById('notes').value.trim();
-
-        if(!vehicle) {
-        alert('Please select or add a vehicle first.');
-        return;
-        }
-
-        const newRecord = {
-        id: Date.now().toString(),
-        vehicle,
-        type,
-        mileage,
-        notes,
-        date: new Date().toLocaleDateString()
-        };
-
-        records.unshift(newRecord);
-        localStorage.setItem('wrenchlog_records', JSON.stringify(records));
-
-        document.getElementById('serviceForm').reset();
-        renderRecords();
+        function savePart(e) {
+            e.preventDefault();
+            const newPart = {
+                id: 'part-' + Date.now(),
+                vehicle: document.getElementById('part-vehicle').value,
+                category: document.getElementById('part-category').value,
+                name: document.getElementById('part-name').value,
+                number: document.getElementById('part-number').value
+            };
+            parts.push(newPart);
+            saveData();
+            document.getElementById('part-form').reset();
+            renderAll();
         }
 
         function deleteRecord(id) {
-        records = records.filter(r => r.id !== id);
-        localStorage.setItem('wrenchlog_records', JSON.stringify(records));
-        renderRecords();
+            records = records.filter(r => r.id !== id);
+            saveData();
+            renderAll();
         }
 
-        function clearRecords() {
-        if (confirm("Are you sure you want to clear all service history? This cannot be undone.")) {
-        records = [];
-        localStorage.removeItem('wrenchlog_records');
-        renderRecords();
+        function deleteVehicle(id) {
+            vehicles = vehicles.filter(v => v.id !== id);
+            saveData();
+            renderAll();
         }
+
+        function deletePart(id) {
+            parts = parts.filter(p => p.id !== id);
+            saveData();
+            renderAll();
+        }
+
+        function renderDashboard() {
+            const summaryEl = document.getElementById('summary-content');
+            summaryEl.innerHTML = `
+                <p><strong>Total Vehicles:</strong> ${vehicles.length}</p>
+                <p><strong>Logged Maintenance Events:</strong> ${records.length}</p>
+                <p><strong>Saved Part/Fluid Specs:</strong> ${parts.length}</p>
+            `;
+
+            const recentEl = document.getElementById('recent-records-list');
+            if (records.length === 0) {
+                recentEl.innerHTML = `<p class="subtitle">No records logged yet.</p>`;
+                return;
+            }
+            recentEl.innerHTML = records.slice(0, 3).map(r => `
+                <div class="record-item">
+                    <div class="record-header">
+                        <span>${r.service}</span>
+                        <span>${r.date}</span>
+                    </div>
+                    <div class="record-details">${r.vehicle} &bull; ${r.mileage} miles</div>
+                    ${r.notes ? `<div class="record-details" style="margin-top: 0.25rem;">${r.notes}</div>` : ''}
+                </div>
+            `).join('');
         }
 
         function renderRecords() {
-        const list = document.getElementById('recordsList');
-        const clearBtn = document.getElementById('clearBtn');
-        if (!list) return;
-
-        if (records.length === 0) {
-        list.innerHTML = '<div class="empty-state">No maintenance records added yet.</div>';
-        if (clearBtn) clearBtn.style.display = 'none';
-        return;
+            const listEl = document.getElementById('full-records-list');
+            if (records.length === 0) {
+                listEl.innerHTML = `<p class="subtitle">No maintenance logs found.</p>`;
+                return;
+            }
+            listEl.innerHTML = records.map(r => `
+                <div class="record-item">
+                    <div class="record-header">
+                        <span>${r.service}</span>
+                        <span>${r.date}</span>
+                    </div>
+                    <div class="record-details">${r.vehicle} &bull; ${r.mileage} miles</div>
+                    ${r.notes ? `<div class="record-details" style="margin-top: 0.25rem;">${r.notes}</div>` : ''}
+                    <div class="actions">
+                        <button class="btn btn-danger btn-sm" onclick="deleteRecord('${r.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        if (clearBtn) clearBtn.style.display = 'block';
-        list.innerHTML = records.map(r => `
-        <div class="record-item">
-        <div class="record-header">
-        <span>${r.vehicle} - ${r.type}</span>
-        <span>${r.mileage} miles</span>
-        </div>
-        <p><small style="color:var(--text-light);">${r.date}</small></p>
-        ${r.notes ? `<p style="margin-top:0.25rem;">${r.notes}</p>` : ''}
-        <button class="delete-btn" onclick="deleteRecord('${r.id}')">Delete Record</button>
-        </div>
-        `).join('');
+        function renderVehicles() {
+            const listEl = document.getElementById('vehicles-list');
+            if (vehicles.length === 0) {
+                listEl.innerHTML = `<p class="subtitle">No vehicles registered.</p>`;
+                return;
+            }
+            listEl.innerHTML = vehicles.map(v => `
+                <div class="record-item">
+                    <div class="record-header">
+                        <span>${v.name}</span>
+                        <button class="btn btn-danger btn-sm" onclick="deleteVehicle('${v.id}')">Remove</button>
+                    </div>
+                    ${v.oil ? `<div class="record-details"><strong>Oil Spec:</strong> ${v.oil}</div>` : ''}
+                    ${v.filters ? `<div class="record-details"><strong>Filters:</strong> ${v.filters}</div>` : ''}
+                </div>
+            `).join('');
         }
 
-        // Initial setup on load
-        updateVehicleDropdowns();
-        renderRecords();
-        renderVehicles();
-        renderParts();
+        function renderParts() {
+            const listEl = document.getElementById('parts-list');
+            if (parts.length === 0) {
+                listEl.innerHTML = `<p class="subtitle">No parts or fluids saved.</p>`;
+                return;
+            }
+            listEl.innerHTML = parts.map(p => `
+                <div class="part-item">
+                    <div class="record-header">
+                        <span>${p.name} (${p.category})</span>
+                        <span style="font-family: monospace; color: var(--primary);">${p.number}</span>
+                    </div>
+                    <div class="record-details">Vehicle: ${p.vehicle}</div>
+                    <div class="actions">
+                        <button class="btn btn-danger btn-sm" onclick="deletePart('${p.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
+        function renderAll() {
+            populateVehicleDropdowns();
+            renderDashboard();
+            renderRecords();
+            renderVehicles();
+            renderParts();
+        }
+
+        function setTodayDate() {
+            const dateInput = document.getElementById('rec-date');
+            if (dateInput && !dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        }
+
+        window.onload = function() {
+            setTodayDate();
+            renderAll();
+        };
     </script>
 </body>
 </html>
