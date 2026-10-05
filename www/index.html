@@ -286,6 +286,21 @@
 
     <!-- Parts & Fluids Tab -->
     <div id="parts" class="tab-content">
+        <!-- Standalone Part Search Card -->
+        <div class="card">
+            <h2>Part Search & Quick Links</h2>
+            <form id="standalone-search-form" onsubmit="performStandaloneSearch(event)">
+                <div class="form-group">
+                    <label for="search-query-input">Part Name, Number, or Description</label>
+                    <input type="text" id="search-query-input" placeholder="e.g. 15208-65F0A or Oil Filter" required>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+                    <button type="button" onclick="launchSearch('amazon')" class="btn" style="background: #FF9900; color: #000; font-weight: bold; flex: 1; min-width: 100px;">Search Amazon</button>
+                    <button type="button" onclick="launchSearch('ebay')" class="btn" style="background: #0064D2; color: #fff; font-weight: bold; flex: 1; min-width: 100px;">Search eBay</button>
+                    <button type="button" onclick="launchSearch('rockauto')" class="btn" style="background: #333; color: #fff; font-weight: bold; flex: 1; min-width: 100px;">Search RockAuto</button>
+                </div>
+            </form>
+        </div>
         <div class="card">
             <h2>Track Parts & Fluid Specs</h2>
             <form id="part-form" onsubmit="savePart(event)">
@@ -550,7 +565,32 @@ function renderParts() {
                 `;
             }).join('');
         }
-function renderAll() {
+
+    function performStandaloneSearch(e) {
+        e.preventDefault();
+        launchSearch('amazon');
+    }
+
+    function launchSearch(platform) {
+        const queryInput = document.getElementById('search-query-input');
+        if (!queryInput || !queryInput.value.trim()) return;
+        const q = encodeURIComponent(queryInput.value.trim());
+
+        let url = '';
+        if (platform === 'amazon') {
+            url = `https://www.amazon.com/s?k=${q}&tag=${AFFILIATE_TAGS.amazon}`;
+        } else if (platform === 'ebay') {
+            url = `https://www.ebay.com/sch/i.html?_nkw=${q}`;
+        } else if (platform === 'rockauto') {
+            url = `https://www.rockauto.com/en/parts/?search=${q}`;
+        }
+
+        if (url) {
+            window.open(url, '_blank');
+        }
+    }
+    
+    function renderAll() {
             populateVehicleDropdowns();
             renderDashboard();
             renderRecords();
