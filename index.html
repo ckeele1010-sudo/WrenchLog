@@ -264,9 +264,30 @@
         <div class="card">
             <h2>Add / Manage Vehicles</h2>
             <form id="vehicle-form" onsubmit="saveVehicle(event)">
+                <input type="hidden" id="veh-id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="form-group">
+                        <label for="veh-year">Year</label>
+                        <input type="text" id="veh-year" placeholder="e.g. 2019" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="veh-make">Make</label>
+                        <input type="text" id="veh-make" placeholder="e.g. Nissan" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="form-group">
+                        <label for="veh-model">Model</label>
+                        <input type="text" id="veh-model" placeholder="e.g. Frontier" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="veh-trim">Trim / Package</label>
+                        <input type="text" id="veh-trim" placeholder="e.g. SV 4x4 Crew Cab">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label for="veh-name">Vehicle Name / Description</label>
-                    <input type="text" id="veh-name" placeholder="e.g. 2019 Nissan Frontier SV 4x4" required>
+                    <label for="veh-engine">Engine</label>
+                    <input type="text" id="veh-engine" placeholder="e.g. 4.0L V6" required>
                 </div>
                 <div class="form-group">
                     <label for="veh-oil">Recommended Oil & Capacity</label>
