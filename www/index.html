@@ -333,12 +333,7 @@
         // Load data from LocalStorage
         let records = JSON.parse(localStorage.getItem('wrenchlog_records')) || [];
         let vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
-            { 
-                id: "default-1", 
-                name: "2019 Nissan Frontier SV 4x4", 
-                oil: "5W-30 Full Synthetic (5.3 Qts)", 
-                filters: "Oil: OEM 15208-65F0A\nAir: Fram CA10627" 
-            }
+            { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
         ];
         let parts = JSON.parse(localStorage.getItem('wrenchlog_parts')) || [
             { id: "p-1", vehicle: "2019 Nissan Frontier SV 4x4", category: "Filters", name: "Oil Filter", number: "OEM 15208-65F0A" }
