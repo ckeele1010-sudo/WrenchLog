@@ -202,11 +202,11 @@
     </header>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
-        <button class="tab-btn" onclick="switchTab('records')">Log Entry</button>
-        <button class="tab-btn" onclick="switchTab('vehicles')">Vehicles</button>
-        <button class="tab-btn" onclick="switchTab('parts')">Parts & Fluids</button>
-            <button class="tab-btn" onclick="switchTab('legal')">Legal & Disclosures</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('records', this)">Log Entry</button>
+        <button class="tab-btn" onclick="switchTab('vehicles', this)">Vehicles</button>
+        <button class="tab-btn" onclick="switchTab('parts', this)">Parts & Fluids</button>
+            <button class="tab-btn" onclick="switchTab('legal', this)">Legal & Disclosures</button>
     </div>
 
     <!-- Dashboard Tab -->
@@ -396,12 +396,17 @@ if (!Array.isArray(parts)) {
     ];
 }
 
-        function switchTab(tabName) {
+        function switchTab(tabName, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-            renderAll();
+            if (btnElement) {
+                btnElement.classList.add('active');
+            } else {
+                const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(tabName));
+                if (btn) btn.classList.add('active');
+            }
+            if (typeof renderAll === 'function') renderAll();
         }
 
         function saveData() {
