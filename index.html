@@ -493,21 +493,32 @@
                 listEl.innerHTML = `<p class="subtitle">No parts or fluids saved.</p>`;
                 return;
             }
-            listEl.innerHTML = parts.map(p => `
-                <div class="part-item">
-                    <div class="record-header">
-                        <span>${p.name} (${p.category})</span>
-                        <span style="font-family: monospace; color: var(--primary);">${p.number}</span>
+            listEl.innerHTML = parts.map(p => {
+                const searchQuery = encodeURIComponent(p.vehicle + ' ' + p.name + ' ' + p.number);
+                const amazonUrl = `https://www.amazon.com/s?k=${searchQuery}&tag=${AFFILIATE_TAGS.amazon}`;
+                const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${searchQuery}`;
+                const rockAutoUrl = `https://www.rockauto.com/en/parts/?search=${encodeURIComponent(p.number)}`;
+                return `
+                    <div class="part-item" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                        <div class="record-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>${p.name}</strong>
+                            <span style="font-family: monospace; color: var(--primary); background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">${p.number}</span>
+                        </div>
+                        <div class="record-details" style="font-size: 0.9rem; color: var(--text-muted); margin: 6px 0;">
+                            <div><strong>Vehicle:</strong> ${p.vehicle}</div>
+                            <div><strong>Category:</strong> ${p.category}</div>
+                        </div>
+                        <div class="actions" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                            <a href="${amazonUrl}" target="_blank" class="btn btn-sm" style="background: #FF9900; color: #000; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Amazon</a>
+                            <a href="${ebayUrl}" target="_blank" class="btn btn-sm" style="background: #0064D2; color: #fff; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">eBay</a>
+                            <a href="${rockAutoUrl}" target="_blank" class="btn btn-sm" style="background: #333; color: #fff; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">RockAuto</a>
+                            <button class="btn btn-danger btn-sm" onclick="deletePart('${p.id}')" style="margin-left: auto; padding: 4px 8px; font-size: 0.8rem;">Delete</button>
+                        </div>
                     </div>
-                    <div class="record-details">Vehicle: ${p.vehicle}</div>
-                    <div class="actions">
-                        <button class="btn btn-danger btn-sm" onclick="deletePart('${p.id}')">Delete</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
-
-        function renderAll() {
+function renderAll() {
             populateVehicleDropdowns();
             renderDashboard();
             renderRecords();
