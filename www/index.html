@@ -476,18 +476,26 @@
                 return;
             }
             listEl.innerHTML = allVehicles.map(v => `
-                <div class="record-item">
-                    <div class="record-header">
-                        <span>${v.name}</span>
-                        <button class="btn btn-danger btn-sm" onclick="deleteVehicle('${v.id}')">Remove</button>
+                <div class="card" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div class="record-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
+                        <h3 style="margin: 0; color: var(--primary); font-size: 1.1rem;">${v.name}</h3>
+                        <button class="btn btn-danger btn-sm" onclick="deleteVehicle('${v.id}')" style="padding: 4px 8px; font-size: 0.8rem;">Remove</button>
                     </div>
-                    ${v.oil ? `<div class="record-details"><strong>Oil Spec:</strong> ${v.oil}</div>` : ''}
-                    ${v.filters ? `<div class="record-details"><strong>Filters:</strong> ${v.filters}</div>` : ''}
+                    <div class="vehicle-specs" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem;">
+                        <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px;">
+                            <strong>Oil Spec & Capacity:</strong><br/>
+                            <span style="color: var(--text-muted);">${v.oil || 'Not specified'}</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px;">
+                            <strong>Filters & Part Numbers:</strong><br/>
+                            <span style="color: var(--text-muted);">${v.filters || 'Not specified'}</span>
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function renderParts() {
+function renderParts() {
             const listEl = document.getElementById('parts-list');
             if (parts.length === 0) {
                 listEl.innerHTML = `<p class="subtitle">No parts or fluids saved.</p>`;
