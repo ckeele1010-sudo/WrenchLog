@@ -376,7 +376,7 @@
             switchTab('dashboard');
         }
 
-                function saveVehicle(e) {
+                        function saveVehicle(e) {
             if (e) e.preventDefault();
             console.log("saveVehicle triggered");
             const nameEl = document.getElementById('veh-name');
@@ -404,7 +404,7 @@
             console.log("Vehicle saved successfully:", newVeh);
         }
 
-        function savePart(e) {
+function savePart(e) {
             e.preventDefault();
             const newPart = {
                 id: 'part-' + Date.now(),
