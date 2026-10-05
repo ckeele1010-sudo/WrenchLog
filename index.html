@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WrenchLog - Maintenance Tracker</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg: #090d16;
+            --card-bg: #111827;
+            --text: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border: #1f2937;
+            --accent: #38bdf8;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        nav button { background: var(--card-bg); color: var(--text-secondary); border: 1px solid var(--border); padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: all 0.2s ease; }
+        nav button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .section { display: none; background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        .section.active { display: block; }
+        label { display: block; margin-top: 12px; font-size: 13px; color: var(--text-secondary); font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 6px 0 14px 0; background: #030712; border: 1px solid var(--border); color: var(--text); border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 15px; margin-top: 5px; }
+        button.action-btn:hover { opacity: 0.9; }
+        .item-card { background: #030712; padding: 15px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .item-card h4 { margin: 0 0 6px 0; color: var(--accent); font-size: 16px; }
+        .item-card p { margin: 4px 0; font-size: 14px; color: var(--text-secondary); }
+        .delete-btn { background: #7f1d1d; color: #fca5a5; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; float: right; font-weight: bold; }
+        .delete-btn:hover { background: #991b1b; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2 style="margin: 0; color: #ffffff; letter-spacing: 0.5px;">WrenchLog</h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">Vehicle Maintenance & Parts Tracker</p>
+        </header>
+
+        <nav>
+            <button onclick="switchTab('services')" class="active" id="btn-services">Service Records</button>
+            <button onclick="switchTab('vehicles')" id="btn-vehicles">Garage</button>
+            <button onclick="switchTab('parts')" id="btn-parts">Parts Search</button>
+        </nav>
+
+        <!-- SERVICES SECTION -->
+        <div id="services" class="section active">
+            <h3 style="margin-top: 0; color: #ffffff;">Add Service Record</h3>
+            
+            <label for="service-vehicle">Select Vehicle</label>
+            <select id="service-vehicle">
+                <option value="">-- Add a vehicle in the Garage first --</option>
+            </select>
+
+            <label for="service-type">Service Type</label>
+            <input type="text" id="service-type" placeholder="e.g., Oil Change, Spark Plugs, Transmission Fluid">
+
+            <label for="service-mileage">Mileage</label>
+            <input type="number" id="service-mileage" placeholder="e.g., 45000">
+
+            <label for="service-date">Date</label>
+            <input type="date" id="service-date">
+
+            <label for="service-notes">Notes / Parts Used</label>
+            <textarea id="service-notes" placeholder="Details about fluids, part numbers, filters..."></textarea>
+
+            <button class="action-btn" onclick="addServiceRecord()">Save Service Record</button>
+            
+            <h3 style="margin-top: 25px; color: #ffffff;">Service History</h3>
+            <div id="service-list"></div>
+        </div>
+
+        <!-- VEHICLES GARAGE SECTION -->
+        <div id="vehicles" class="section">
+            <h3 style="margin-top: 0; color: #ffffff;">Manage Garage</h3>
+            
+            <label for="veh-name">Vehicle Name / Year Make Model</label>
+            <input type="text" id="veh-name" placeholder="e.g., 2019 Nissan Frontier SV">
+
+            <label for="veh-engine">Engine / Specs</label>
+            <input type="text" id="veh-engine" placeholder="e.g., 4.0L V6 4x4">
+
+            <button class="action-btn" onclick="addVehicle()">Add Vehicle to Garage</button>
+
+            <h3 style="margin-top: 25px; color: #ffffff;">My Vehicles</h3>
+            <div id="vehicle-list"></div>
+        </div>
+
+        <!-- PARTS SEARCH SECTION -->
+        <div id="parts" class="section">
+            <h3 style="margin-top: 0; color: #ffffff;">Amazon Parts Search</h3>
+            <p style="color: var(--text-secondary); font-size: 13px;">Quick-search replacement parts, fluids, and filters for your saved vehicles.</p>
+            
+            <label for="parts-vehicle-select">Select Vehicle to Search For</label>
+            <select id="parts-vehicle-select">
+                <option value="">-- Select a Vehicle --</option>
+            </select>
+
+            <label for="parts-query">Part Keyword</label>
+            <input type="text" id="parts-query" placeholder="e.g., oil filter, spark plugs, brake pads">
+
+            <button class="action-btn" onclick="searchAmazonParts()">Search Amazon Parts</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('service-date').valueAsDate = new Date();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        function loadData() {
+            const vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles') || '[]');
+            const serviceVehicleSelect = document.getElementById('service-vehicle');
+            const partsVehicleSelect = document.getElementById('parts-vehicle-select');
+            
+            let vehicleOptions = '<option value="">-- Select Vehicle --</option>';
+            vehicles.forEach((v) => {
+                vehicleOptions += `<option value="${v.name}">${v.name}</option>`;
+            });
+            serviceVehicleSelect.innerHTML = vehicleOptions;
+            partsVehicleSelect.innerHTML = vehicleOptions;
+
+            document.getElementById('vehicle-list').innerHTML = vehicles.map((v, index) => `
+                <div class="item-card">
+                    <button class="delete-btn" onclick="deleteVehicle(${index})">Delete</button>
+                    <h4>${v.name}</h4>
+                    <p>${v.engine}</p>
+                </div>
+            `).join('') || '<p style="color: var(--text-secondary);">No vehicles in garage yet.</p>';
+
+            const services = JSON.parse(localStorage.getItem('wrenchlog_services') || '[]');
+            document.getElementById('service-list').innerHTML = services.map((s, index) => `
+                <div class="item-card">
+                    <button class="delete-btn" onclick="deleteService(${index})">Delete</button>
+                    <h4>${s.type} - ${s.vehicle}</h4>
+                    <p><strong>Mileage:</strong> ${s.mileage ? Number(s.mileage).toLocaleString() + ' mi' : 'N/A'} | <strong>Date:</strong> ${s.date || 'N/A'}</p>
+                    <p>${s.notes}</p>
+                </div>
+            `).join('') || '<p style="color: var(--text-secondary);">No service records saved yet.</p>';
+        }
+
+        function addVehicle() {
+            const name = document.getElementById('veh-name').value.trim();
+            const engine = document.getElementById('veh-engine').value.trim();
+            if(!name) return alert('Please enter the vehicle name/model.');
+
+            const vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles') || '[]');
+            vehicles.unshift({ name, engine });
+            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+
+            document.getElementById('veh-name').value = '';
+            document.getElementById('veh-engine').value = '';
+            loadData();
+        }
+
+        function deleteVehicle(index) {
+            if(!confirm('Delete this vehicle?')) return;
+            const vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles') || '[]');
+            vehicles.splice(index, 1);
+            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+            loadData();
+        }
+
+        function addServiceRecord() {
+            const vehicle = document.getElementById('service-vehicle').value;
+            const type = document.getElementById('service-type').value.trim();
+            const mileage = document.getElementById('service-mileage').value;
+            const date = document.getElementById('service-date').value;
+            const notes = document.getElementById('service-notes').value.trim();
+
+            if(!vehicle) return alert('Please select a vehicle from your garage.');
+            if(!type) return alert('Please enter the service type.');
+
+            const services = JSON.parse(localStorage.getItem('wrenchlog_services') || '[]');
+            services.unshift({ vehicle, type, mileage, date, notes });
+            localStorage.setItem('wrenchlog_services', JSON.stringify(services));
+
+            document.getElementById('service-type').value = '';
+            document.getElementById('service-mileage').value = '';
+            document.getElementById('service-notes').value = '';
+            document.getElementById('service-date').valueAsDate = new Date();
+            loadData();
+        }
+
+        function deleteService(index) {
+            if(!confirm('Delete this service record?')) return;
+            const services = JSON.parse(localStorage.getItem('wrenchlog_services') || '[]');
+            services.splice(index, 1);
+            localStorage.setItem('wrenchlog_services', JSON.stringify(services));
+            loadData();
+        }
+
+        function searchAmazonParts() {
+            const vehicle = document.getElementById('parts-vehicle-select').value;
+            const query = document.getElementById('parts-query').value.trim();
+
+            if(!query) return alert('Please enter a part keyword to search.');
+
+            const searchTerm = encodeURIComponent((vehicle ? vehicle + ' ' : '') + query);
+            const affiliateTag = 'wrenchlog-20';
+            const amazonUrl = `https://www.amazon.com/s?k=${searchTerm}&tag=${affiliateTag}`;
+            window.open(amazonUrl, '_blank');
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
