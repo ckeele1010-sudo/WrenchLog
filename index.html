@@ -376,13 +376,14 @@
             switchTab('dashboard');
         }
 
-                                        function saveVehicle(e) {
+                                                function saveVehicle(e) {
             if (e) e.preventDefault();
             console.log("saveVehicle triggered");
             const nameEl = document.getElementById('veh-name');
             const oilEl = document.getElementById('veh-oil');
             const filtersEl = document.getElementById('veh-filters');
             
+            if (nameEl == null || nameEl.value.trim() === '') {
                 alert('Please enter a vehicle name.');
                 return;
             }
