@@ -206,6 +206,7 @@
         <button class="tab-btn" onclick="switchTab('records')">Log Entry</button>
         <button class="tab-btn" onclick="switchTab('vehicles')">Vehicles</button>
         <button class="tab-btn" onclick="switchTab('parts')">Parts & Fluids</button>
+            <button class="tab-btn" onclick="switchTab('legal')">Legal & Disclosures</button>
     </div>
 
     <!-- Dashboard Tab -->
@@ -340,6 +341,36 @@
             <div id="parts-list"></div>
         </div>
     </div>
+
+    
+        <!-- Legal & Disclosures Tab -->
+        <div id="legal" class="tab-content">
+            <div class="card">
+                <h2>Legal & Disclosures</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; color: var(--text-main); margin-bottom: 6px;">Affiliate Disclosure</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                        As an Amazon Associate, WrenchLog earns a commission on select qualifying parts and products ordered through links provided within the application. This helps support the ongoing development and maintenance of the tool at no additional cost to you.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; color: var(--text-main); margin-bottom: 6px;">DIY Maintenance Disclaimer</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                        WrenchLog is designed as a personal maintenance tracking and reference utility. Automotive repair, fluid changes, and mechanical work carry inherent risks of injury, vehicle damage, or component failure. Always verify part numbers, specifications, torque values, and safety procedures against official factory service manuals for your specific vehicle make, model, and year. All mechanical work is performed entirely at your own risk.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 1rem; color: var(--text-main); margin-bottom: 6px;">Privacy & Data</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                        WrenchLog stores your vehicle logs, maintenance records, and saved parts locally on your device or browser storage. We do not harvest, track, or sell your personal vehicle records or usage data.
+                    </p>
+                </div>
+            </div>
+        </div>
+
 
     <script>
         // Affiliate Tracking Configuration
