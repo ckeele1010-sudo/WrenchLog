@@ -521,22 +521,7 @@ if (!Array.isArray(parts)) {
             console.log("Vehicle saved successfully:", vehicleData);
         }
 
-            const newVeh = {
-                id: 'veh-' + Date.now(),
-                name: nameEl.value.trim(),
-                oil: oilEl ? oilEl.value.trim() : '',
-                filters: filtersEl ? filtersEl.value.trim() : ''
-            };
-            
-            allVehicles.push(newVeh);
-            saveData();
-            
-            const form = document.getElementById('vehicle-form');
-            if (form) form.reset();
-            
-            renderAll();
-            console.log("Vehicle saved successfully:", newVeh);
-        }
+
 
 function savePart(e) {
             e.preventDefault();
