@@ -325,247 +325,248 @@
     </div>
 
     <script>
+
         // Affiliate Tracking Configuration
         const AFFILIATE_TAGS = {
-            amazon: "wrenchlog20-20"
+        amazon: "wrenchlog20-20"
         };
 
         // Load data from LocalStorage
         let records = JSON.parse(localStorage.getItem('wrenchlog_records')) || [];
         let vehicles = JSON.parse(localStorage.getItem('wrenchlog_vehicles')) || [
-            { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
+        { id: "default-1", name: "2019 Nissan Frontier SV 4x4", oil: "5W-30 Full Synthetic (5.3 Qts)", filters: "Oil: OEM 15208-65F0A Air: Fram CA10627" }
         ];
         let parts = JSON.parse(localStorage.getItem('wrenchlog_parts')) || [
-            { id: "p-1", vehicle: "2019 Nissan Frontier SV 4x4", category: "Filters", name: "Oil Filter", number: "OEM 15208-65F0A" }
+        { id: "p-1", vehicle: "2019 Nissan Frontier SV 4x4", category: "Filters", name: "Oil Filter", number: "OEM 15208-65F0A" }
         ];
 
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            if(tabName === 'logs') {
-                document.getElementById('logs-tab').classList.add('active');
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                updateVehicleDropdowns();
-            } else if(tabName === 'garage') {
-                document.getElementById('garage-tab').classList.add('active');
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                renderVehicles();
-            } else if(tabName === 'parts') {
-                document.getElementById('parts-tab').classList.add('active');
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                updateVehicleDropdowns();
-                renderParts();
-            }
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+        if(tabName === 'logs') {
+        document.getElementById('logs-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        updateVehicleDropdowns();
+        } else if(tabName === 'garage') {
+        document.getElementById('garage-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        renderVehicles();
+        } else if(tabName === 'parts') {
+        document.getElementById('parts-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        updateVehicleDropdowns();
+        renderParts();
+        }
         }
 
         function updateVehicleDropdowns() {
-            const selects = [document.getElementById('vehicleSelect'), document.getElementById('partVehicleSelect')];
-            selects.forEach(select => {
-                if (!select) return;
-                select.innerHTML = '';
-                if (vehicles.length === 0) {
-                    select.innerHTML = '<option value="">-- No vehicles available --</option>';
-                    return;
-                }
-                vehicles.forEach(v => {
-                    const opt = document.createElement('option');
-                    opt.value = v.name;
-                    opt.textContent = v.name;
-                    select.appendChild(opt);
-                });
-            });
+        const selects = [document.getElementById('vehicleSelect'), document.getElementById('partVehicleSelect')];
+        selects.forEach(select => {
+        if (!select) return;
+        select.innerHTML = '';
+        if (vehicles.length === 0) {
+        select.innerHTML = '<option value="">-- No vehicles available --</option>';
+        return;
+        }
+        vehicles.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name;
+        opt.textContent = v.name;
+        select.appendChild(opt);
+        });
+        });
         }
 
         function addVehicle(e) {
-            e.preventDefault();
-            const name = document.getElementById('vehName').value.trim();
-            const oil = document.getElementById('vehOil').value.trim();
-            const filters = document.getElementById('vehFilters').value.trim();
+        e.preventDefault();
+        const name = document.getElementById('vehName').value.trim();
+        const oil = document.getElementById('vehOil').value.trim();
+        const filters = document.getElementById('vehFilters').value.trim();
 
-            if (!name) return;
+        if (!name) return;
 
-            const newVeh = {
-                id: Date.now().toString(),
-                name,
-                oil,
-                filters
-            };
+        const newVeh = {
+        id: Date.now().toString(),
+        name,
+        oil,
+        filters
+        };
 
-            vehicles.push(newVeh);
-            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
-            
-            document.getElementById('vehicleForm').reset();
-            renderVehicles();
-            updateVehicleDropdowns();
+        vehicles.push(newVeh);
+        localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+
+        document.getElementById('vehicleForm').reset();
+        renderVehicles();
+        updateVehicleDropdowns();
         }
 
         function deleteVehicle(id) {
-            vehicles = vehicles.filter(v => v.id !== id);
-            localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
-            renderVehicles();
-            updateVehicleDropdowns();
+        vehicles = vehicles.filter(v => v.id !== id);
+        localStorage.setItem('wrenchlog_vehicles', JSON.stringify(vehicles));
+        renderVehicles();
+        updateVehicleDropdowns();
         }
 
         function renderVehicles() {
-            const list = document.getElementById('vehiclesList');
-            if (!list) return;
-            if (vehicles.length === 0) {
-                list.innerHTML = '<div class="empty-state">No vehicles added yet. Add one above!</div>';
-                return;
-            }
-            list.innerHTML = vehicles.map(v => `
-                <div class="vehicle-item">
-                    <div class="vehicle-header">
-                        <span>${v.name}</span>
-                    </div>
-                    <p><strong>Oil Specs:</strong> ${v.oil || 'Not specified'}</p>
-                    <p><strong>Filters:</strong><br>${(v.filters || 'None').replace(/\n/g, '<br>')}</p>
-                    <button class="delete-btn" onclick="deleteVehicle('${v.id}')">Remove Vehicle</button>
-                </div>
-            `).join('');
+        const list = document.getElementById('vehiclesList');
+        if (!list) return;
+        if (vehicles.length === 0) {
+        list.innerHTML = '<div class="empty-state">No vehicles added yet. Add one above!</div>';
+        return;
+        }
+        list.innerHTML = vehicles.map(v => `
+        <div class="vehicle-item">
+        <div class="vehicle-header">
+        <span>${v.name}</span>
+        </div>
+        <p><strong>Oil Specs:</strong> ${v.oil || 'Not specified'}</p>
+        <p><strong>Filters:</strong><br>${(v.filters || 'None').replace(/\n/g, '<br>')}</p>
+        <button class="delete-btn" onclick="deleteVehicle('${v.id}')">Remove Vehicle</button>
+        </div>
+        `).join('');
         }
 
         function addPart(e) {
-            e.preventDefault();
-            const vehicle = document.getElementById('partVehicleSelect').value;
-            const category = document.getElementById('partCategory').value.trim();
-            const name = document.getElementById('partName').value.trim();
-            const number = document.getElementById('partNumber').value.trim();
+        e.preventDefault();
+        const vehicle = document.getElementById('partVehicleSelect').value;
+        const category = document.getElementById('partCategory').value.trim();
+        const name = document.getElementById('partName').value.trim();
+        const number = document.getElementById('partNumber').value.trim();
 
-            if (!vehicle || !category || !name || !number) return;
+        if (!vehicle || !category || !name || !number) return;
 
-            const newPart = {
-                id: Date.now().toString(),
-                vehicle,
-                category,
-                name,
-                number
-            };
+        const newPart = {
+        id: Date.now().toString(),
+        vehicle,
+        category,
+        name,
+        number
+        };
 
-            parts.unshift(newPart);
-            localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
-            
-            document.getElementById('partForm').reset();
-            renderParts();
+        parts.unshift(newPart);
+        localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
+
+        document.getElementById('partForm').reset();
+        renderParts();
         }
 
         function deletePart(id) {
-            parts = parts.filter(p => p.id !== id);
-            localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
-            renderParts();
+        parts = parts.filter(p => p.id !== id);
+        localStorage.setItem('wrenchlog_parts', JSON.stringify(parts));
+        renderParts();
         }
 
         function renderParts() {
-            const list = document.getElementById('partsList');
-            const searchVal = (document.getElementById('partSearch')?.value || '').toLowerCase();
-            if (!list) return;
+        const list = document.getElementById('partsList');
+        const searchVal = (document.getElementById('partSearch')?.value || '').toLowerCase();
+        if (!list) return;
 
-            const filteredParts = parts.filter(p => 
-                p.name.toLowerCase().includes(searchVal) || 
-                p.number.toLowerCase().includes(searchVal) || 
-                p.category.toLowerCase().includes(searchVal) ||
-                p.vehicle.toLowerCase().includes(searchVal)
-            );
+        const filteredParts = parts.filter(p => 
+        p.name.toLowerCase().includes(searchVal) || 
+        p.number.toLowerCase().includes(searchVal) || 
+        p.category.toLowerCase().includes(searchVal) ||
+        p.vehicle.toLowerCase().includes(searchVal)
+        );
 
-            if (filteredParts.length === 0) {
-                list.innerHTML = '<div class="empty-state">No matching parts found.</div>';
-                return;
-            }
+        if (filteredParts.length === 0) {
+        list.innerHTML = '<div class="empty-state">No matching parts found.</div>';
+        return;
+        }
 
-            list.innerHTML = filteredParts.map(p => {
-                const encodedQuery = encodeURIComponent(`${p.vehicle} ${p.name} ${p.number}`);
-                const encodedPartNum = encodeURIComponent(p.number);
-                
-                const amazonUrl = `https://www.amazon.com/s?k=${encodedQuery}&tag=${AFFILIATE_TAGS.amazon}`;
-                const oreillyUrl = `https://www.oreillyauto.com/search?q=${encodedPartNum}`;
-                const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
+        list.innerHTML = filteredParts.map(p => {
+        const encodedQuery = encodeURIComponent(`${p.vehicle} ${p.name} ${p.number}`);
+        const encodedPartNum = encodeURIComponent(p.number);
 
-                return `
-                    <div class="part-item">
-                        <div class="part-header">
-                            <span>[${p.category}] ${p.name}</span>
-                            <strong style="color:var(--primary);">${p.number}</strong>
-                        </div>
-                        <p><small style="color:var(--text-light);">${p.vehicle}</small></p>
-                        
-                        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
-                            <a href="${amazonUrl}" target="_blank" style="font-size: 0.8rem; background: #ff9900; color: #000; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Buy on Amazon (Affiliate)</a>
-                            <a href="${oreillyUrl}" target="_blank" style="font-size: 0.8rem; background: #003366; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Search O'Reilly</a>
-                            <a href="${ebayUrl}" target="_blank" style="font-size: 0.8rem; background: #0064d2; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Find on eBay</a>
-                        </div>
+        const amazonUrl = `https://www.amazon.com/s?k=${encodedQuery}&tag=${AFFILIATE_TAGS.amazon}`;
+        const oreillyUrl = `https://www.oreillyauto.com/search?q=${encodedPartNum}`;
+        const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
 
-                        <button class="delete-btn" onclick="deletePart('${p.id}')">Delete Part</button>
-                    </div>
-                `;
-            }).join('');
+        return `
+        <div class="part-item">
+        <div class="part-header">
+        <span>[${p.category}] ${p.name}</span>
+        <strong style="color:var(--primary);">${p.number}</strong>
+        </div>
+        <p><small style="color:var(--text-light);">${p.vehicle}</small></p>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
+        <a href="${amazonUrl}" target="_blank" style="font-size: 0.8rem; background: #ff9900; color: #000; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Buy on Amazon (Affiliate)</a>
+        <a href="${oreillyUrl}" target="_blank" style="font-size: 0.8rem; background: #003366; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Search O'Reilly</a>
+        <a href="${ebayUrl}" target="_blank" style="font-size: 0.8rem; background: #0064d2; color: #fff; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: 600;">Find on eBay</a>
+        </div>
+
+        <button class="delete-btn" onclick="deletePart('${p.id}')">Delete Part</button>
+        </div>
+        `;
+        }).join('');
         }
 
         function addRecord(e) {
-            e.preventDefault();
-            const vehicle = document.getElementById('vehicleSelect').value;
-            const type = document.getElementById('serviceType').value.trim();
-            const mileage = document.getElementById('mileage').value.trim();
-            const notes = document.getElementById('notes').value.trim();
+        e.preventDefault();
+        const vehicle = document.getElementById('vehicleSelect').value;
+        const type = document.getElementById('serviceType').value.trim();
+        const mileage = document.getElementById('mileage').value.trim();
+        const notes = document.getElementById('notes').value.trim();
 
-            if(!vehicle) {
-                alert('Please select or add a vehicle first.');
-                return;
-            }
+        if(!vehicle) {
+        alert('Please select or add a vehicle first.');
+        return;
+        }
 
-            const newRecord = {
-                id: Date.now().toString(),
-                vehicle,
-                type,
-                mileage,
-                notes,
-                date: new Date().toLocaleDateString()
-            };
+        const newRecord = {
+        id: Date.now().toString(),
+        vehicle,
+        type,
+        mileage,
+        notes,
+        date: new Date().toLocaleDateString()
+        };
 
-            records.unshift(newRecord);
-            localStorage.setItem('wrenchlog_records', JSON.stringify(records));
-            
-            document.getElementById('serviceForm').reset();
-            renderRecords();
+        records.unshift(newRecord);
+        localStorage.setItem('wrenchlog_records', JSON.stringify(records));
+
+        document.getElementById('serviceForm').reset();
+        renderRecords();
         }
 
         function deleteRecord(id) {
-            records = records.filter(r => r.id !== id);
-            localStorage.setItem('wrenchlog_records', JSON.stringify(records));
-            renderRecords();
+        records = records.filter(r => r.id !== id);
+        localStorage.setItem('wrenchlog_records', JSON.stringify(records));
+        renderRecords();
         }
 
         function clearRecords() {
-            if (confirm("Are you sure you want to clear all service history? This cannot be undone.")) {
-                records = [];
-                localStorage.removeItem('wrenchlog_records');
-                renderRecords();
-            }
+        if (confirm("Are you sure you want to clear all service history? This cannot be undone.")) {
+        records = [];
+        localStorage.removeItem('wrenchlog_records');
+        renderRecords();
+        }
         }
 
         function renderRecords() {
-            const list = document.getElementById('recordsList');
-            const clearBtn = document.getElementById('clearBtn');
-            if (!list) return;
+        const list = document.getElementById('recordsList');
+        const clearBtn = document.getElementById('clearBtn');
+        if (!list) return;
 
-            if (records.length === 0) {
-                list.innerHTML = '<div class="empty-state">No maintenance records added yet.</div>';
-                if (clearBtn) clearBtn.style.display = 'none';
-                return;
-            }
+        if (records.length === 0) {
+        list.innerHTML = '<div class="empty-state">No maintenance records added yet.</div>';
+        if (clearBtn) clearBtn.style.display = 'none';
+        return;
+        }
 
-            if (clearBtn) clearBtn.style.display = 'block';
-            list.innerHTML = records.map(r => `
-                <div class="record-item">
-                    <div class="record-header">
-                        <span>${r.vehicle} - ${r.type}</span>
-                        <span>${r.mileage} miles</span>
-                    </div>
-                    <p><small style="color:var(--text-light);">${r.date}</small></p>
-                    ${r.notes ? `<p style="margin-top:0.25rem;">${r.notes}</p>` : ''}
-                    <button class="delete-btn" onclick="deleteRecord('${r.id}')">Delete Record</button>
-                </div>
-            `).join('');
+        if (clearBtn) clearBtn.style.display = 'block';
+        list.innerHTML = records.map(r => `
+        <div class="record-item">
+        <div class="record-header">
+        <span>${r.vehicle} - ${r.type}</span>
+        <span>${r.mileage} miles</span>
+        </div>
+        <p><small style="color:var(--text-light);">${r.date}</small></p>
+        ${r.notes ? `<p style="margin-top:0.25rem;">${r.notes}</p>` : ''}
+        <button class="delete-btn" onclick="deleteRecord('${r.id}')">Delete Record</button>
+        </div>
+        `).join('');
         }
 
         // Initial setup on load
@@ -573,6 +574,7 @@
         renderRecords();
         renderVehicles();
         renderParts();
+
     </script>
 </body>
 </html>
